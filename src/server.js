@@ -20,7 +20,7 @@ export const setupServer = () => {
     }),
   );
 
-  app.use('/contacts', async (req, res) => {
+  app.get('/contacts', async (req, res) => {
     const contacts = await getAllContacts();
     res.status(200).json({
       message: 'Successfully found contacts!',
@@ -28,16 +28,17 @@ export const setupServer = () => {
     });
   });
 
-  app.use('/contacts/:contactId', async (req, res, next) => {
-    const contactId = await getContactById();
-    if (!contactId) {
+  app.get('/contacts/:contactId', async (req, res, next) => {
+    const { contactId } = req.params;
+    const contact = await getContactById(contactId);
+    if (!contact) {
       res.status(404).json({
         message: 'Contact not found',
       });
     }
     res.status(200).json({
       message: `Successfully found contact with id ${contactId}`,
-      data: contactId,
+      data: contact,
     });
   });
 
