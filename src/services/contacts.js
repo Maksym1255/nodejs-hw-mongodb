@@ -17,3 +17,34 @@ export const getContactById = async (contactId) => {
     console.log('get contact by id: ', error);
   }
 };
+
+export const createContact = async ({
+  name,
+  phoneNumber,
+  email,
+  isFavourite,
+  contactType,
+}) => {
+  const newContact = new ContactsCollection({
+    name,
+    phoneNumber,
+    email: email || null,
+    isFavourite: isFavourite || false,
+    contactType,
+  });
+  const savedContact = await newContact.save();
+
+  return savedContact;
+};
+
+export const updateContactById = async (contactId, updateData) => {
+  return await ContactsCollection.findByIdAndUpdate(contactId, updateData, {
+    new: true,
+    runValidators: true,
+  });
+};
+
+export const deleteContactById = async (contactId) => {
+  const deleteContact = await ContactsCollection.findByIdAndDelete(contactId);
+  return deleteContact;
+};
