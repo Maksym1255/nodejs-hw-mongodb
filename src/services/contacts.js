@@ -1,37 +1,17 @@
 import { ContactsCollection } from '../db/models/contacts.js';
 
 export const getAllContacts = async () => {
-  try {
-    const contacts = await ContactsCollection.find();
-    return contacts;
-  } catch (error) {
-    console.log('get all contacts error: ', error);
-  }
+  const contacts = await ContactsCollection.find();
+  return contacts;
 };
 
 export const getContactById = async (contactId) => {
-  try {
-    const contact = await ContactsCollection.findById(contactId);
-    return contact;
-  } catch (error) {
-    console.log('get contact by id: ', error);
-  }
+  const contact = await ContactsCollection.findById(contactId);
+  return contact;
 };
 
-export const createContact = async ({
-  name,
-  phoneNumber,
-  email,
-  isFavourite,
-  contactType,
-}) => {
-  const newContact = new ContactsCollection({
-    name,
-    phoneNumber,
-    email: email || null,
-    isFavourite: isFavourite || false,
-    contactType,
-  });
+export const createContact = async (payload) => {
+  const newContact = new ContactsCollection(payload);
   const savedContact = await newContact.save();
 
   return savedContact;
