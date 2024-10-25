@@ -8,11 +8,12 @@ export const getAllContacts = async ({
   sortOrder = SORT_ORDER.ASC,
   sortBy = '_id',
   filter = {},
+  userId,
 }) => {
   const limit = perPage;
   const skip = (page - 1) * perPage;
 
-  const contactsQuery = ContactsCollection.find();
+  const contactsQuery = ContactsCollection.find({ userId });
 
   if (filter.contactType) {
     contactsQuery.where('contactType').equals(filter.contactType);
@@ -22,7 +23,7 @@ export const getAllContacts = async ({
   }
 
   const [contactsCount, contacts] = await Promise.all([
-    ContactsCollection.find().merge(contactsQuery).countDocuments(),
+    ContactsCollection.find({ userId }).merge(contactsQuery).countDocuments(),
     contactsQuery
       .skip(skip)
       .limit(limit)
@@ -38,28 +39,31 @@ export const getAllContacts = async ({
   };
 };
 
-export const getContactById = async (contactId) => {
-  const contact = await ContactsCollection.findById(contactId);
-  return contact;
+export const getContactById = async (contactId, userId) => {
+  return await ContactsCollection.findOne({ _id: contactId, userId });
 };
 
 export const createContact = async (payload) => {
   const newContact = new ContactsCollection(payload);
-  const savedContact = await newContact.save();
-
-  return savedContact;
+  return await newContact.save();
 };
 
-export const updateContactById = async (contactId, updateData) => {
-  return await ContactsCollection.findByIdAndUpdate(contactId, updateData, {
-    new: true,
-    runValidators: true,
-  });
+export const updateContactById = async (contactId, updateData, userId) => {
+  return await ContactsCollection.findOneAndUpdate(
+    { _id: contactId, userId },
+    updateData,
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
 };
 
-export const deleteContactById = async (contactId) => {
-  const deleteContact = await ContactsCollection.findByIdAndDelete(contactId, {
-    new: true,
-  });
-  return deleteContact;
+export const deleteContactById = async (contactId, userId) => {
+  return await ContactsCollection.findOneAndDelete(
+    { _id: contactId, userId },
+    {
+      new: true,
+    },
+  );
 };

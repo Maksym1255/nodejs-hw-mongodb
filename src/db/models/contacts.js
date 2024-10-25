@@ -4,7 +4,7 @@ const contactsSchema = new Schema(
   {
     name: {
       type: String,
-      requiered: true,
+      required: true,
     },
     phoneNumber: {
       type: String,
@@ -22,6 +22,10 @@ const contactsSchema = new Schema(
       enum: ['work', 'home', 'personal'],
       required: true,
       default: 'personal',
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'users',
     },
   },
   {
